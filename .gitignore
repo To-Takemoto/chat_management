@@ -8,3 +8,9 @@ wheels/
 
 # venv
 .venv
+
+#テストディレクトリ
+test/
+
+#環境変数
+.env

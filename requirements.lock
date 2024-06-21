@@ -17,6 +17,9 @@ anyio==4.4.0
 certifi==2024.6.2
     # via httpcore
     # via httpx
+    # via requests
+charset-normalizer==3.3.2
+    # via requests
 click==8.1.7
     # via typer
     # via uvicorn
@@ -36,11 +39,13 @@ httpcore==1.0.5
 httptools==0.6.1
     # via uvicorn
 httpx==0.27.0
+    # via chat-management
     # via fastapi
 idna==3.7
     # via anyio
     # via email-validator
     # via httpx
+    # via requests
 jinja2==3.1.4
     # via fastapi
 markdown-it-py==3.0.0
@@ -63,6 +68,8 @@ python-multipart==0.0.9
     # via fastapi
 pyyaml==6.0.1
     # via uvicorn
+requests==2.32.3
+    # via chat-management
 rich==13.7.1
     # via typer
 shellingham==1.5.4
@@ -81,6 +88,8 @@ typing-extensions==4.12.2
     # via typer
 ujson==5.10.0
     # via fastapi
+urllib3==2.2.1
+    # via requests
 uvicorn==0.30.1
     # via fastapi
 uvloop==0.19.0
