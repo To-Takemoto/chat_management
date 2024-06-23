@@ -88,9 +88,11 @@ html = """
 </html>
 """
 
+
 @app.get("/")
 async def get():
     return HTMLResponse(html)
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -110,39 +112,49 @@ async def websocket_endpoint(websocket: WebSocket):
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
                     "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 json={
                     "model": selected_model,
                     "messages": conversation_history,
-                    "stream": True
-                }
+                    "stream": True,
+                },
             ) as response:
                 assistant_reply = ""
                 first_chunk = True
                 async for line in response.aiter_lines():
                     if line.startswith("data: "):
                         try:
-                            json_data = line[len("data: "):]
+                            json_data = line[len("data: ") :]
                             data = json.loads(json_data)
-                            if "delta" in data["choices"][0] and "content" in data["choices"][0]["delta"]:
+                            if (
+                                "delta" in data["choices"][0]
+                                and "content" in data["choices"][0]["delta"]
+                            ):
                                 content = data["choices"][0]["delta"]["content"]
                                 assistant_reply += content
                                 if first_chunk:
-                                    await websocket.send_text(json.dumps({
-                                        "model": selected_model,
-                                        "content": content
-                                    }))
+                                    await websocket.send_text(
+                                        json.dumps(
+                                            {
+                                                "model": selected_model,
+                                                "content": content,
+                                            }
+                                        )
+                                    )
                                     first_chunk = False
                                 else:
-                                    await websocket.send_text(json.dumps({
-                                        "model": "",
-                                        "content": content
-                                    }))
+                                    await websocket.send_text(
+                                        json.dumps({"model": "", "content": content})
+                                    )
                         except (json.JSONDecodeError, KeyError):
                             continue
-                conversation_history.append({"role": "assistant", "content": assistant_reply})
+                conversation_history.append(
+                    {"role": "assistant", "content": assistant_reply}
+                )
+
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
