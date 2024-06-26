@@ -1,0 +1,17 @@
+{
+    "table_name": "branches",
+    "columns": [
+      {
+        "name": "id",
+        "type": "INTEGER PRIMARY KEY AUTOINCREMENT"
+      },
+      {
+        "name": "user_id",
+        "type": "INTEGER"
+      },
+      {
+        "name": "id_list",
+        "type": "TEXT"
+      }
+    ]
+   }

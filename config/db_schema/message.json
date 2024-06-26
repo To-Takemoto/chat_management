@@ -1,0 +1,33 @@
+{
+    "table_name": "messages",
+    "columns": [
+      {
+        "name": "id",
+        "type": "INTEGER PRIMARY KEY AUTOINCREMENT"
+      },
+      {
+        "name": "gen_id",
+        "type": "TEXT"
+      },
+      {
+        "name": "user_id",
+        "type": "INTEGER"
+      },
+      {
+        "name": "model",
+        "type": "TEXT"
+      },
+      {
+        "name": "content",
+        "type": "TEXT"
+      },
+      {
+        "name": "prompt_tokens",
+        "type": "INTEGER"
+      },
+      {
+        "name": "completion_tokens",
+        "type": "INTEGER"
+      }
+    ]
+   }
