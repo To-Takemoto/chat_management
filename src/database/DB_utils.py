@@ -15,7 +15,7 @@ DBHandlerAd
 '''
 
 
-import sqlite3
+import sqlite3, json
 
 #下の関数はDBに接続するためのデコレータ
 def db_connection(func):
@@ -199,6 +199,57 @@ class DBHandler:
             return True
         else:
             return False
+        
+    @db_connection
+    @error_handling
+    def insert_json(self, table_name: str, json_data: dict, last_id) -> bool:
+        """
+        概要 : JSONデータを指定されたテーブルに挿入するメソッド。
+        table_name : insert先のテーブルを指定。テーブルが存在していないとエラーになる。
+        json_data : insertしたいJSONデータ。キーにテーブルのカラム名、バリューに実際に挿入したいデータを入れる。
+        """
+        json_str = json.dumps(json_data)
+        data = {'json_data': json_str}
+        columns = ",".join(data.keys())
+        values = ",".join(["?"] * len(data))
+        query = f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+        self.cur.execute(query, tuple(data.values()))
+        if last_id:
+            last_id = self.cur.lastrowid
+            return last_id
+
+    @db_connection
+    @error_handling
+    def select_json(self, table_name: str, conditions: str = None) -> dict:
+        """
+        概要 : 指定された条件でJSONデータを取得するメソッド。
+        table_name : select先のテーブルを指定。テーブルが存在していないとエラーになる。
+        conditions : select条件を指定。
+        """
+        query = f"SELECT json_data FROM {table_name}"
+        if conditions:
+            query += f" WHERE {conditions}"
+        self.cur.execute(query)
+        result = self.cur.fetchone()
+        if result:
+            return json.loads(result[0])
+        return {}
+    
+    @db_connection
+    @error_handling
+    def update_data(self, table_name: str, data: dict, conditions: dict) -> bool:
+        """
+        概要: 特定の条件に基づいてデータを更新するメソッド。
+        table_name: 更新対象のテーブルを指定。
+        data: 更新したいデータ。キーにテーブルのカラム名、バリューに新しいデータを入れる。
+        conditions: 更新条件を指定する辞書。キーにカラム名、バリューに条件の値を入れる。
+        """
+        set_clause = ", ".join([f"{k} = ?" for k in data.keys()])
+        where_clause = " AND ".join([f"{k} = ?" for k in conditions.keys()])
+        query = f"UPDATE {table_name} SET {set_clause} WHERE {where_clause}"
+        values = list(data.values()) + list(conditions.values())
+        self.cur.execute(query, tuple(values))
+        return True
     
 
 class DBHandlerAd(DBHandler):

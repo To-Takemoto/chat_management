@@ -1,5 +1,5 @@
 {
-    "table_name": "branches",
+    "table_name": "system_messages",
     "columns": [
       {
         "name": "id",
@@ -10,8 +10,8 @@
         "type": "INTEGER"
       },
       {
-        "name": "json_data",
+        "name": "content",
         "type": "TEXT"
       }
     ]
-   }
+}

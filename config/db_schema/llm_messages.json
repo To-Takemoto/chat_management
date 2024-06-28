@@ -1,5 +1,5 @@
 {
-    "table_name": "messages",
+    "table_name": "llm_messages",
     "columns": [
       {
         "name": "id",
@@ -12,6 +12,10 @@
       {
         "name": "user_id",
         "type": "INTEGER"
+      },
+      {
+        "name": "created",
+        "type": "TEXT"
       },
       {
         "name": "model",
