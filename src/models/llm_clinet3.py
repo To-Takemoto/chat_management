@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 import os
-from typing import Any, AsyncGenerator, Dict, List, Optional
+from typing import Any, AsyncGenerator, Optional
 
 import httpx
 
@@ -58,24 +58,24 @@ class LLMClient:
 
     async def post_chat_completion(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         stream: bool = False,
         include_meta_data: bool = False,
         max_retries: int = 3,
         backoff_factor: float = 0.5,
-    ) -> Dict[str, Any] | AsyncGenerator[str | Dict[str, Any], None]:
+    ) -> dict[str, Any] | AsyncGenerator[str | dict[str, Any], None]:
         """
         Post a chat completion request to the API.
 
         Args:
-            messages (List[Dict[str, str]]): The messages to send to the API.
+            messages (list[dict[str, str]]): The messages to send to the API.
             stream (bool): Whether to stream the response.
             include_meta_data (bool): Whether to include metadata in the response.
             max_retries (int): Maximum number of retries for failed requests.
             backoff_factor (float): Factor to determine the delay between retries.
 
         Returns:
-            Dict[str, Any] | AsyncGenerator[str | Dict[str, Any], None]: The API response or a generator of response chunks.
+            dict[str, Any] | AsyncGenerator[str | dict[str, Any], None]: The API response or a generator of response chunks.
 
         Raises:
             httpx.HTTPError: If an HTTP error occurs after all retries have been exhausted.
@@ -112,11 +112,11 @@ class LLMClient:
 
     async def _stream_response(
         self,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         include_meta_data: bool,
         max_retries: int,
         backoff_factor: float,
-    ) -> AsyncGenerator[str | Dict[str, Any], None]:
+    ) -> AsyncGenerator[str | dict[str, Any], None]:
         for attempt in range(max_retries):
             try:
                 async with self.client.stream(
@@ -146,7 +146,7 @@ class LLMClient:
                 logger.error(f"An unexpected error occurred while streaming: {e}")
                 raise
 
-    def _parse_chunk(self, chunk: str) -> str | Dict[str, Any]:
+    def _parse_chunk(self, chunk: str) -> str | dict[str, Any]:
         chunk = chunk.strip()
         if chunk.startswith("data:"):
             chunk = chunk[5:].strip()
@@ -167,7 +167,7 @@ class LLMClient:
             return ""
         
     @staticmethod
-    def _extract_meta_data(data: Dict[str, Any]) -> Dict[str, Any]:
+    def _extract_meta_data(data: dict[str, Any]) -> dict[str, Any]:
         return {
             "id": data.get("id"),
             "model": data.get("model"),
